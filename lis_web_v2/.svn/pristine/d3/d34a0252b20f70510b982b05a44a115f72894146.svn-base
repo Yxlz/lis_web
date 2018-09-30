@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+.rightMenuPanel{
+	width:60%;
+	float:right
+}
+.leftMenuPanel{
+	width:40%;
+	float:left
+}

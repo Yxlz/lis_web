@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+
+.leftRulePanel {
+	width: 50%;
+	float: left;
+}
+
+.rightTwoPanel {
+	width: 50%;
+	float: right;
+}
+.containerPanel{
+	height:50%;
+}
+.inspecItemPanel{
+	height:50%;
+}

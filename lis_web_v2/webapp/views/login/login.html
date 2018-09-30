@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>用户登录</title>
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="../../statics/css/login.css" />
+    <link rel="stylesheet" type="text/css"
+	href="../../statics/toastr/css/toastr.css">
+	<script type="text/javascript" src="../../statics/jQuery/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../statics/js/login/login.js"></script>
+	<script type="text/javascript" src="../../statics/toastr/js/toastr.min.js"></script>
+	<script type="text/javascript">
+	        toastr.options.positionClass = 'toast-center-center';
+	</script>
+  </head>
+  <body>
+      <div id="mainBody" class="login-main">
+           <img id="bgIcon" src="../../statics/img/loginbody.png" />
+           <div id="loginField" class="login-field">
+               <div class="uname">
+	              <input type="text" id="username" value="" maxlength="16" placeholder="账号" />
+	              <img class="inner-icon" src="../../statics/img/uname-icon.png"/>
+	           </div>
+	           <div class="pwd">
+	              <input type="password" id="password" value="" maxlength="16" placeholder="密码"/>
+	              <img class="inner-icon" src="../../statics/img/pwd-icon.png"/>
+	           </div>
+	           <div class="login-btns">
+	              <a id="cancelBl" class="reset_btn">重置</a>  
+				  <a id="loginBl" class="login_btn">登录</a>
+	           </div>
+	           <div class="login_notice">
+					<a class="op_show" href='../../doc/usemenu.html'>用户手册</a> 
+			   </div>
+           </div>
+      </div>
+  </body>
+</html>

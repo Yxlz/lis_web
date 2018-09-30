@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>检验科接收标本统计</title>
+</head>
+<script type="text/javascript">
+	$(document).ready(function() {
+		loadIframeContent("Statistics_of_receive_specimens_in_laboratory");//调用main.js里的方法加载报表页面
+	});
+</script>
+<body>
+	<div id="Statistics_of_receive_specimens_in_laboratory">
+		<iframe name="target" frameborder="0" scrolling="no" width="100%"
+			height="100%" src=""></iframe>
+	</div>
+</body>
+</html>

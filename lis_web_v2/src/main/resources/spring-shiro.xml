@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+       
+     <!-- 安全认证过滤器 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/views/login/login.html" />
+		<!-- <property name="successUrl" value="/user/loginSuccess" /> -->
+		<property name="unauthorizedUrl" value="/error/403.do" />
+		<!-- <property name="filters">
+			<util:map>
+				<entry key="authc" value-ref="formAuthenticationFilter" />
+			</util:map>
+		</property> -->
+		<property name="filterChainDefinitions">
+			<value>
+				/mdro/** = anon
+				/statics/js/mdroDetail/** = anon
+				/views/mdro/** = anon
+			    #测试部分
+			    /testReqOrder/** = anon
+			    #以下不进行拦截
+			    /service/lisW/** =anon
+				/right/** = anon
+			    /views/login/** = anon
+			    /views/error/** = anon
+			    /error/** = anon
+			    /login/login.do = anon
+			    /main/main.do = anon
+			    /login/logout.do = anon
+			    /login/islogin.do = anon
+			    #功能js下面的内容需要身份验证
+			    /statics/js/modules/** = authc
+			    /statics/** = anon
+			    /reqOrder/** = anon
+			    /services/** = anon
+			    #管理员下面的资源需要身份验证，且需要管理员的权限
+			    /admin/** = authc,perms[ADMIN]
+			    /views/admin/** = authc,perms[ADMIN]
+			    # 除上面以外的请求都需要身份验证
+				/** = authc
+			</value>
+		</property>
+	</bean>
+
+	<!-- 定义Shiro安全管理配置 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="myShiroRealm" />
+	</bean>
+
+	<bean id="myShiroRealm" class="com.cdxt.lisweb.security.ShiroRealm">
+		<!-- businessManager 用来实现用户名密码的查询 -->
+	<!-- 	<property name="businessManager" ref="businessManager" /> -->
+		<!-- <property name="cacheManager" ref="shiroCacheManager" /> -->
+	</bean>
+
+	<!--用于在实现了Initializable/Destroyable接口的 Shiro bean 初始化时回调-->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!--shiro ehcache缓存-->
+	<!-- <bean id="shiroCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:ehcache-shiro.xml" />
+	</bean> -->
+
+	<bean id="formAuthenticationFilter"
+		class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter" />
+		
+	<!-- AOP式方法级权限检查  -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
+     
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+</beans>

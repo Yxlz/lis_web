@@ -1,0 +1,18 @@
+<%@ page language="java" pageEncoding="utf-8"%>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>耐药菌感染临床治疗指导意见</title>
+</head>
+<style>
+	div { 
+		/* width:1600px; */
+		word-wrap:break-word; 
+		word-break:normal;
+	 }
+</style>
+<body>
+	<h4 align="center"><%=request.getAttribute("mdroName")%>感染的临床治疗指导意见</h4>
+	<div><pre><%=request.getAttribute("mdroDetail")%></pre></div>
+</body>
+</html>

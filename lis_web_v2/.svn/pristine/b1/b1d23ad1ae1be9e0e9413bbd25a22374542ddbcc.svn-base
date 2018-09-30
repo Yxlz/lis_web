@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>质量控制指标--本年周转时间中位数2</title>
+</head>
+<script type="text/javascript">
+	$(document).ready(function() {
+		loadIframeContent('QCI_median_time_of_turnover_time_this_year2');//调用main.js里的方法加载报表页面
+	});
+</script>
+<body>
+	<div id="QCI_median_time_of_turnover_time_this_year2">
+		<iframe name="target" frameborder="0" scrolling="no" width="100%"
+			height="100%" src=""></iframe>
+	</div>
+</body>
+</html>

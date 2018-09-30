@@ -1,0 +1,16 @@
+@CHARSET "UTF-8";
+
+.rightRolePanel {
+	width: 25%;
+	float: right;
+}
+
+.middleRolePanel {
+	float: left;
+	width: 25%;
+}
+
+.leftRolePanel {
+	width:50%;
+	float: left;
+}

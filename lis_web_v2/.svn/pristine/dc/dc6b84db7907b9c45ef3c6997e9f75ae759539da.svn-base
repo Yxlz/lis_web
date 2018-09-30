@@ -1,0 +1,29 @@
+package com.cdxt.lisweb.service.examine;
+
+import java.util.List;
+import java.util.Map;
+
+import com.cdxt.lisweb.entity.examine.LisItemDevCode;
+import com.cdxt.lisweb.service.BaseService;
+/**
+ * @author : liushijun
+ * @date 创建时间：2018年6月21日 
+ * @version 1.0
+ * @company :成都信通网易科技发展有限公司
+ * @description: //TODO
+ */
+public interface LisItemDevCodeService extends BaseService<LisItemDevCode>{
+	
+	public List<String> getAllEquipment();
+	/**
+	 * 用于查询下拉设备名字和id
+	 * @return
+	 */
+	public  List<String> getAllEquipmentNameAndId();
+	/**
+	 * 查询下拉项目名称
+	 * @return
+	 */
+	public  List<String>  findItemName() ;
+	
+}

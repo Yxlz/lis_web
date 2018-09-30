@@ -1,0 +1,281 @@
+package com.cdxt.lisweb.dao;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import com.cdxt.lisweb.constants.CommonConstants;
+import com.cdxt.lisweb.model.core.Page;
+
+/**
+ * 基础dao，提供简单数据库操作，提供 hibernate到数据库的会话session
+ * 
+ * @author lixying
+ * @date 2017年4月20日 上午10:22:14
+ * @since 1.0.0
+ */
+public abstract class BaseDaoImpl<T> implements BaseDao<T> {
+
+	@Autowired
+	@Qualifier("sessionFactory")
+	private SessionFactory sessionFactory;
+
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	/**
+	 * 当前线程周期内如果有则获取该session，没有则新建
+	 * 
+	 * @return
+	 */
+	@Override
+	public Session getSession() {
+		return sessionFactory.getCurrentSession();
+	}
+
+	/**
+	 * 打开一个新的会话session，需要自己处理会话关闭
+	 * 
+	 * @return
+	 */
+	@Override
+	public Session openSession() {
+		return sessionFactory.openSession();
+	}
+
+	public abstract Class<T> getEntityType();
+
+	@Override
+	public void save(T t) {
+		getSession().persist(t);
+	}
+
+	@Override
+	public void saveAll(List<T> list) {
+		Session session = getSession();
+		for (T t : list) {
+			session.save(t);
+		}
+	}
+
+	public void saveOrUpdateAll(List<T> list) {
+		Session session = getSession();
+		for (T t : list) {
+			session.saveOrUpdate(t);
+		}
+	}
+
+	public void mergeAll(List<T> list) {
+		Session session = getSession();
+		for (T t : list) {
+			session.merge(t);
+		}
+	}
+
+	@Override
+	public void delete(T t) {
+		getSession().delete(t);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public T queryById(Serializable id) {
+		return (T) getSession().get(getEntityType(), id);
+	}
+
+	@Override
+	public Map<String, Object> queryAllByPage(int start, int limit,
+			Map<String, Object> q, String... orderBy) {
+		String entityName = getEntityType().getSimpleName();
+		StringBuilder hql = new StringBuilder("select t from ").append(
+				entityName).append(" t ");
+
+		StringBuilder where = new StringBuilder();
+
+		int counter = 0;
+		for (String key : q.keySet()) {
+			if (counter == 0) {
+				where.append("where ");
+			} else {
+				where.append(" and t.");
+			}
+			where.append(key).append("=:").append(key);
+			counter++;
+		}
+
+		hql.append(where);
+
+		if (orderBy != null) {
+			for (int i = 0; i < orderBy.length; i++) {
+				if (i == 0) {
+					hql.append(" order by ");
+				} else {
+					hql.append(" , ");
+				}
+				hql.append(" t.").append(orderBy[i]);
+			}
+		}
+
+		Query query = getSession().createQuery(hql.toString());
+
+		for (Map.Entry<String, Object> entry : q.entrySet()) {
+			query.setParameter(entry.getKey(), entry.getValue());
+		}
+
+		query.setMaxResults(limit);
+		query.setFirstResult(start);
+
+		Map<String, Object> queryResult = new HashMap<String, Object>();
+		queryResult.put(CommonConstants.QUERY_PAGE_ROWS, query.list());
+
+		query = getSession().createQuery(
+				"select count(t) from " + entityName + " t " + where);
+
+		for (Map.Entry<String, Object> entry : q.entrySet()) {
+			query.setParameter(entry.getKey(), entry.getValue());
+		}
+
+		queryResult.put(CommonConstants.QUERY_PAGE_TOTAL, query.uniqueResult());
+
+		return queryResult;
+	}
+		@Override
+		public Map<String,Object> queryAllByPageMh(int start, int limit,Map<String,Object> q,String... orderBy){
+			String entityName = getEntityType().getSimpleName();
+			StringBuilder hql = new StringBuilder("select t from ").append(
+					entityName).append(" t ");
+
+			StringBuilder where = new StringBuilder();
+
+			int counter = 0;
+			for (String key : q.keySet()) {
+				if (counter == 0) {
+					where.append("where t.");
+				} else {
+					where.append(" and t.");
+				}
+				where.append(key).append(" like :").append(key);
+				counter++;
+			}
+
+			hql.append(where);
+
+			if (orderBy != null) {
+				for (int i = 0; i < orderBy.length; i++) {
+					if (i == 0) {
+						hql.append(" order by ");
+					} else {
+						hql.append(" , ");
+					}
+					hql.append(" t.").append(orderBy[i]);
+				}
+			}
+
+			Query query = getSession().createQuery(hql.toString());
+
+			for (Map.Entry<String, Object> entry : q.entrySet()) {
+				query.setParameter(entry.getKey(), "%" + entry.getValue() + "%");
+			}
+
+			query.setMaxResults(limit);
+			query.setFirstResult(start);
+
+			Map<String, Object> queryResult = new HashMap<String, Object>();
+			queryResult.put(CommonConstants.QUERY_PAGE_ROWS, query.list());
+
+			query = getSession().createQuery(
+					"select count(t) from " + entityName + " t " + where);
+
+			for (Map.Entry<String, Object> entry : q.entrySet()) {
+				query.setParameter(entry.getKey(), "%" + entry.getValue() + "%");
+			}
+
+			queryResult.put(CommonConstants.QUERY_PAGE_TOTAL, query.uniqueResult());
+
+			return queryResult;
+		};
+
+	@SuppressWarnings("unchecked")
+	public List<T> queryAll(String... orderBy) {
+		String entityName = getEntityType().getSimpleName();
+		StringBuilder hql = new StringBuilder("select t from " + entityName
+				+ " t");
+		if (orderBy != null) {
+			for (int i = 0; i < orderBy.length; i++) {
+				if (i == 0) {
+					hql.append(" order by ");
+				} else {
+					hql.append(" , ");
+				}
+				hql.append(" t.").append(orderBy[i]);
+			}
+		}
+		return getSession().createQuery(hql.toString()).list();
+	}
+
+	@Override
+	public void update(T t) {
+		getSession().update(t);
+	}
+
+	@Override
+	public void merge(T t) {
+		getSession().merge(t);
+	}
+
+	public void saveOrUpdate(T t) {
+		getSession().saveOrUpdate(t);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Page<T> queryForPage(int start, int limit,
+			List<Criterion> expressions, List<Order> orders) {
+		Criteria criteria = getSession().createCriteria(this.getEntityType());
+		for (Criterion expression : expressions) {
+			criteria.add(expression);
+		}
+		for (Order order : orders) {
+			criteria.addOrder(order);
+		}
+		Integer total = ((Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult()).intValue();
+		criteria.setProjection(null);
+		criteria.setFirstResult(start);
+		criteria.setMaxResults(limit);
+		return new Page<T>(start, limit, total, criteria.list());
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Page<T> queryForPage(int start, int limit,
+			List<Criterion> expressions) {
+		Criteria criteria = getSession().createCriteria(this.getEntityType());
+		for (Criterion expression : expressions) {
+				criteria.add(expression);
+		}
+		Integer total = ((Long) criteria.setProjection(Projections.rowCount())
+				.uniqueResult()).intValue();
+		criteria.setProjection(null);
+		criteria.addOrder(Order.desc("appTime"));
+		criteria.setFirstResult(start);
+		criteria.setMaxResults(limit);
+		return new Page<T>(start, limit, total, criteria.list());
+	}
+}

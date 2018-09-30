@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/tx
+      http://www.springframework.org/schema/tx/spring-tx.xsd 
+      http://www.springframework.org/schema/task 
+      http://www.springframework.org/schema/task/spring-task.xsd
+      http://www.springframework.org/schema/cache 
+      http://www.springframework.org/schema/cache/spring-cache.xsd
+      ">
+
+	<!-- 引入jdbc配置文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+
+	<!-- 扫描文件（自动将servicec层注入） -->
+	<context:component-scan base-package="com.cdxt.lisweb.service.*.impl" />
+	<context:component-scan base-package="com.cdxt.lisweb.service.examine.impl" />
+	<context:component-scan base-package="com.cdxt.lisweb.dao.*.impl" />
+	<context:component-scan base-package="com.cdxt.lisweb.dao.examine.impl" />
+	<context:component-scan base-package="com.cdxt.lisweb.manager.imp" />
+	<!-- <context:component-scan base-package="com.cdxt.regionlis.webservice" />
+	<context:component-scan base-package="com.cdxt.xhlis.pem.*" /> -->
+
+	<import resource="spring-hibernate-oracle.xml" />
+	<import resource="spring-shiro.xml" />
+	<import resource="spring-cxf.xml" />
+
+	<!-- 配置任务bean类 -->  
+ 	<!-- <bean id="taskJob" class="com.cdxt.regionlis.task.TaskJob"></bean>  
+ 	<bean id="taskJobCharge" class="com.cdxt.regionlis.task.TaskJobCharge"></bean>  
+ 	
+ 
+		配置spring的定时器，配置作业类
+ 	<bean id="taskJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="taskJob"></property>
+		<property name="targetMethod" value="doJob"></property>
+		<property name="concurrent" value="false"></property>作业不并发调度
+	</bean> 
+	 <bean id="taskJobDetailCharge"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="taskJobCharge"></property>
+		<property name="targetMethod" value="doJob"></property>
+		<property name="concurrent" value="false"></property>作业不并发调度
+	</bean> 
+	配置作业幅度的触发方式（触发器）   有两种
+		按照一定频度调用任务
+ 	 <bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+		<property name="jobDetail" ref="taskJobDetail"/>
+		<property name="startDelay" value="10000"/> 调度工厂实例化后，经过10秒开始执行调度
+		<property name="repeatInterval" value="3600000"/>每小时调度一次
+	</bean> 
+		支持到指定时间运行一次
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="taskJobDetailCharge"/>
+		<property name="cronExpression" value="0 0 0,12, * * ?" />
+	</bean> 
+
+	配置定时器调度工厂，选择作业幅度触发器
+	 <bean
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+		 	<list> 
+		 		<ref bean="simpleTrigger"/>
+		 		<ref bean="cronTrigger"/>
+		 	</list>
+		</property> 
+	</bean>  -->
+ 
+	<!-- 支持 @Async 注解 -->
+ 	<task:annotation-driven />
+
+	<cache:annotation-driven cache-manager="cacheManager" />  
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">  
+        <property name="cacheManager" ref="ehcache"></property>  
+    </bean>  
+
+    <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">  
+        <property name="configLocation" value="classpath:ehcache-spring.xml"></property>  
+    </bean>
+    
+
+</beans>

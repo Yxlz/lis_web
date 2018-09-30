@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>条码生成规则维护</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css"
+	href="../statics/css/BarcodeRule.css" />
+</head>
+<script type="text/javascript"
+	src="../statics/js/modules/BarcodeRule.js"></script>
+<body>
+	<div class="container-fluid" style="padding-bottom:0px;">
+		<div class="row">
+			<div class="panel panel-primary leftRulePanel">
+				<div class="panel-heading">规则列表</div>
+				<div class="btn-group btn-group-sm">
+					<button id="btn_add_bcRule" type="button"
+						class="btn btn-default btn-noborder" data-toggle="modal"
+						data-target="#barcodeRuleModal">
+						新增<span class="glyphicon glyphicon-plus"></span>
+					</button>
+					<button id="btn_edit_bcRule" type="button"
+						class="btn btn-default btn-noborder" data-toggle="modal"
+						data-target="">
+						编辑 <span class="glyphicon glyphicon-pencil"></span>
+					</button>
+					<button id="btn_delete_bcRule" type="button"
+						class="btn btn-default btn-noborder">
+						删除 <span class="glyphicon glyphicon-remove"></span>
+					</button>
+				</div>
+				<div class="btn-group btn-group-sm pull-right">
+					<button type="button" class="btn btn-default btn-noborder"
+						onClick="refreshRuleTable()">
+						<span class="glyphicon glyphicon-refresh"></span>
+					</button>
+				</div>
+
+				<div class="panel-body">
+					<table id="tb_barcodeRule"></table>
+				</div>
+			</div>
+			<div class="rightTwoPanel">
+				<div class="panel panel-primary containerPanel">
+					<div class="panel-heading">容器</div>
+					<div class="btn-group btn-group-sm">
+						<button id="btn_add_bcRuleCon" type="button"
+							class="btn btn-default btn-noborder" onClick="addRuleCon()">
+							新增<span class="glyphicon glyphicon-plus"></span>
+						</button>
+						<button type="button" class="btn btn-default btn-noborder"
+							onClick="deleteRuleCon()">
+							删除 <span class="glyphicon glyphicon-remove"></span>
+						</button>
+					</div>
+					<div class="btn-group btn-group-sm pull-right">
+						<button type="button" class="btn btn-default btn-noborder"
+							onClick="refreshRuleConTable()">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</div>
+					<div class="panel-body">
+						<table id="tb_barcodeRuleCon"></table>
+					</div>
+				</div>
+				<div class="panel panel-primary inspecItemPanel">
+					<div class="panel-heading">项目</div>
+					<div class="toolbar_barcoderuleitem">
+						<div class="btn-group btn-group-sm">
+							<button id="btn_add_bcRuleItem" type="button"
+								class="btn btn-default btn-noborder" onClick="addRuleItem()">
+								新增<span class="glyphicon glyphicon-plus"></span>
+							</button>
+							<button type="button" class="btn btn-default btn-noborder"
+								onClick="deleteRuleItem()">
+								删除 <span class="glyphicon glyphicon-remove"></span>
+							</button>
+						</div>
+						<div class="btn-group btn-group-sm pull-right">
+							<button type="button" class="btn btn-default btn-noborder"
+								onClick="refreshRuleItemTable()">
+								<span class="glyphicon glyphicon-refresh"></span>
+							</button>
+						</div>
+						<div class="panel-body">
+							<table id="tb_barcodeRuleItem"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 模态框（Modal） -->
+	<form class="form-horizontal" role="form" id="form_barcodeRule_data" onkeydown="if(event.keyCode==13)return false;" 
+		style="margin: 20px;">
+		<div class="modal fade" id="barcodeRuleModal" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel-bcRule"
+			aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel-bcRule">请输入 条码规则信息</h4>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal" role="form">
+							<div class="form-group">
+								<div class="col-sm-9">
+									<input type="hidden" class="form-control" id="id-bcRule"
+										name="id" value="">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">规则名称</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control" name="ruleName"
+										value="" id="ruleName" placeholder="规则名称">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">检验类别</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control"
+										name="insepctionCategory" value="" id="insepctionCategory"
+										placeholder="检验类别">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">优先级别</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control" name="priority"
+										value="" id="priority" placeholder="输入1 2 3 ...">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">条码数量</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control" name="barcodeNum"
+										id="barcodeNum" placeholder="输入1 2 3 ...">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">打印张数</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control" name="prinNum" value=""
+										id="prinNum" placeholder="输入1 2 3 ...">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">参数条件</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control" name="para" value=""
+										id="para" placeholder="参数条件">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">适合条件</label>
+								<div class="col-sm-7">
+									<input type="text" class="form-control" name="condition"
+										value="" id="condition" placeholder="适合条件">
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="button-shutdown-bcRule"
+							class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" id="button-submit-bcRule"
+							class="btn btn-primary" data-dismiss="modal">提交</button>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal -->
+		</div>
+	</form>
+</body>
+</html>

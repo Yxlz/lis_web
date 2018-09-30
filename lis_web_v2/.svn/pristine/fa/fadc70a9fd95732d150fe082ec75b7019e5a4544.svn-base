@@ -1,0 +1,162 @@
+package com.cdxt.lisweb.entity.examine;
+/**
+ * @author : liushijun
+ * @date 创建时间：2018年6月21日 
+ * @version 1.0
+ * @company :成都信通网易科技发展有限公司
+ * @description: //TODO
+ */
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+/**
+ * @author : liushijun
+ * @date 创建时间：2018年6月23日 
+ * @version 1.0
+ * @company :成都信通网易科技发展有限公司
+ * @description:用于存储LIS_ITEM_DEV_CODE 对象
+ */
+@Entity
+@Table(name="LIS_ITEM_DEV_CODE")
+@NamedQuery(name="LisItemDevCode.findAll", query="SELECT l FROM LisItemDevCode l")
+public class LisItemDevCode implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue
+	private String id;
+	
+	@ManyToOne
+	@JoinColumn(name="DEV_CODE")
+	private LisInspecDevInfo devCode;
+	
+	@Column(name="SERIAL_NO")
+	private String serialNo;
+	
+	@Column(name="ITEM_CODE")
+	private String itemCode;
+	
+	@Column(name="ITEM_NAME")
+	private String itemName;
+	
+	@Column(name="ITEM_NAME_CN")
+	private String itemNameCn;
+	
+	@Column(name="INSPEC_NAME")
+	private String inspecName;
+	
+	@Column(name="UNIT")
+	private String init;
+	
+	
+	private LisAiQcItemDevCode lisAiQcItemDevCode;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+	
+
+	public String getSerialNo() {
+		return serialNo;
+	}
+
+	public void setSerialNo(String serialNo) {
+		this.serialNo = serialNo;
+	}
+
+	public String getItemCode() {
+		return itemCode;
+	}
+
+	public void setItemCode(String itemCode) {
+		this.itemCode = itemCode;
+	}
+
+	public String getItemName() {
+		return itemName;
+	}
+
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
+	}
+
+	public String getItemNameCn() {
+		return itemNameCn;
+	}
+
+	public void setItemNameCn(String itemNameCn) {
+		this.itemNameCn = itemNameCn;
+	}
+
+	public String getInspecName() {
+		return inspecName;
+	}
+
+	public void setInspecName(String inspecName) {
+		this.inspecName = inspecName;
+	}
+
+	public String getInit() {
+		return init;
+	}
+
+	public void setInit(String init) {
+		this.init = init;
+	}
+
+	public LisInspecDevInfo getDevCode() {
+		return devCode;
+	}
+
+	public void setDevCode(LisInspecDevInfo devCode) {
+		this.devCode = devCode;
+	}
+	public LisAiQcItemDevCode getLisAiQcItemDevCode() {
+		return lisAiQcItemDevCode;
+	}
+
+	public void setLisAiQcItemDevCode(LisAiQcItemDevCode lisAiQcItemDevCode) {
+		this.lisAiQcItemDevCode = lisAiQcItemDevCode;
+	}
+
+
+
+	public LisItemDevCode(String id, LisInspecDevInfo devCode, String serialNo,
+			String itemCode, String itemName, String itemNameCn, String inspecName, 
+			String init, LisAiQcItemDevCode lisAiQcItemDevCode) {
+		super();
+		this.id = id;
+		this.devCode = devCode;
+		this.serialNo = serialNo;
+		this.itemCode = itemCode;
+		this.itemName = itemName;
+		this.itemNameCn = itemNameCn;
+		this.inspecName = inspecName;
+		this.init = init;
+		this.lisAiQcItemDevCode = lisAiQcItemDevCode;
+	}
+
+	public LisItemDevCode() {
+
+	}
+
+	
+
+	
+
+}

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="client" default="jar-server" basedir=".">
+	<!-- value="lis_web" 打包后的包名 -->
+	<property name="product" value="lis_web" />
+	<property name="version" value="1.0" />
+	<!-- value="${basedir}/src/main/java" 需要打包的java代码路径（就是你展开项目后，java Resources里的装代码包的文件夹）  -->
+	<property name="src.dir" value="${basedir}/src/main/java" />
+	<!-- value="${basedir}/dist" 一个用于装当前项目打成的jar包的文件夹  后边配置自动创建无需手动添加 -->
+	<property name="dist.dir" value="${basedir}/dist"/>
+	<!-- value="${basedir}/build" 同上 也是自动创建， 用于存储需要打包的源码的 .class文件-->
+	<property name="build.dir" value="${basedir}/build" />
+	<!-- value="${product}.jar" jar全名-->
+	<property name="jar.file" value="${product}.jar" />
+
+	<property name="lib.dir" value="${basedir}/webapp/WEB-INF/lib" />
+
+	<property name="target.dir"  value="." />
+
+	<!--编译时需要的本地的包路径，和引用maven仓库的包路径-->
+	<path id="classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<!-- 删除build文件夹和删除dist文件夹下打包的jar包-->
+	<target name="clean">
+		<echo>clean build dir</echo>
+		<delete dir="${build.dir}" quiet="true" />
+		<delete file="${dist.dir}/${jar.file}" quiet="true" />
+	</target>
+	<!-- 创建build，dist文件夹-->
+	<target name="init" depends="clean">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+	<!-- 需要打包的java文件，srcdir="${src.dir}"：java文件路径 ，destdir="${build.dir}" .class路径，<classpath refid="classpath" /> 编译时依赖包路径  -->
+	<target name="compile" depends="init">
+		<echo>compile the source</echo>
+		<javac srcdir="${src.dir}" destdir="${build.dir}" encoding="UTF-8" includeantruntime="on">
+			<include name="com/cdxt/lisweb/entity/examine/*.java" />
+			<include name="com/cdxt/lisweb/manager/**/*.java" />
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<!--打包.class文件-->
+	<target name="jar-server" depends="compile">
+		<jar destfile="${dist.dir}/${jar.file}">
+			<fileset dir="${build.dir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+		<!--需要拷贝到的地方 ， 目录路径是当前打包生成的jar 的dist文件夹开始，-->
+		<copy todir="../lisclient_V2/lib_to_sign" >
+			<fileset  dir="${dist.dir}">
+				<include name="${jar.file}"/>
+			</fileset>
+		</copy>
+	</target>
+</project>

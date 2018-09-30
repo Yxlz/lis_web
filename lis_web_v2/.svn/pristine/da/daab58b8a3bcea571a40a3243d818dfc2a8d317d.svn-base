@@ -1,0 +1,51 @@
+package com.cdxt.lisweb.service.examine;
+
+import java.util.List;
+import java.util.Map;
+
+import com.cdxt.lisweb.entity.examine.LisAiItemDevHist;
+import com.cdxt.lisweb.service.BaseService;
+
+/**
+ * @author : liushijun
+ * @date 创建时间：2018年7月6日 
+ * @version 1.0
+ * @company :成都信通网易科技发展有限公司
+ * @description: 
+ */
+public interface LisAiItemDevHistService extends BaseService<LisAiItemDevHist>{
+	/**
+	 * 用于通过项目id查询添加判断的项目数据
+	 * @param start
+	 * @param limit
+	 * @param itemId
+	 * @return
+	 */
+	public Map<String, Object> findHistJudgeAdded(int start,int limit,String itemId,String typeId);
+	
+	/**
+	 * 用于通过项目id和类型id查询对象
+	 * @param itemId
+	 * @return
+	 */
+	public String findHistJudgeItem(String itemId,String typeId);
+
+
+	/**
+	 * 根据分组查询添加类型后的项目
+	 * @param start
+	 * @param limit
+	 * @param typeId 类型Id
+	 * @return
+	 */
+	public Map<String,Object> findHistAddedItem(int start,int limit,String groupId ,String typeId);
+	
+	public List<LisAiItemDevHist> findHistJudgeItemObj(String typeId, String itemId);
+	
+	/**
+	 * 根据项目id获取历史规则数据
+	 * @param itemDevId
+	 * @return
+	 */
+	public List<LisAiItemDevHist> findHistByItemDevId(String itemDevId);
+}

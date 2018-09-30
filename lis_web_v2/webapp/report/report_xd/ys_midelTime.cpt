@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WorkBook xmlVersion="20151125" releaseVersion="8.0.0">
+<TableDataMap>
+<TableData name="main" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="d1"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="d2"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ward"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="inspecType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="dept"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ptype"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[JDBC3-宜宾]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select a.执行科室, a.最短送检时间, a.最长送检时间, a.med, b.零送检标本数, a.total
+from
+(select T.execute_section 执行科室,min(T.cha) 最短送检时间,max(T.cha) 最长送检时间, round(median(T.cha), 0) med,count(t.id) total from (
+select a.execute_section,a.id,a.p_name,round(to_number(a.time_receive-a.time_collect) * 24 * 60) as cha
+from lis_requestion_receive a inner join lis_inspec_dev_info b on b.id=a.dev_code_id where a.time_receive between to_date('${d1}','yyyy-MM-dd HH24:mi:ss')
+and to_date('${d2}','yyyy-MM-dd HH24:mi:ss') 
+${if(len(dept) == 0,""," and a.sourcefrom_section = '" + dept + "'")}
+${if(len(ward) == 0,""," and a.execute_section = '" +ward+ "'")}
+${if(len(ptype) == 0,"","and a.emergency = '" + ptype + "'")}
+${if(len(inspecType) == 0,"","and b.dev_name in (" + inspecType + ")")}
+order by cha desc) T
+where cha > 0
+group by T.execute_section
+order by med desc) a
+left join
+(select T.execute_section 执行科室,count(t.id) 零送检标本数 from (
+select a.execute_section,a.id,a.p_name,round(to_number(a.time_receive-a.time_collect) * 24 * 60) as cha
+from lis_requestion_receive a inner join lis_inspec_dev_info b on b.id=a.dev_code_id where a.time_receive between to_date('${d1}','yyyy-MM-dd HH24:mi:ss')
+and to_date('${d2}','yyyy-MM-dd HH24:mi:ss') 
+${if(len(dept) == 0,""," and a.sourcefrom_section = '" + dept + "'")}
+${if(len(ward) == 0,""," and a.execute_section = '" +ward+ "'")}
+${if(len(ptype) == 0,"","and a.emergency = '" + ptype + "'")}
+${if(len(inspecType) == 0,"","and b.dev_name in (" + inspecType + ")")}
+order by cha desc) T
+where cha = 0
+group by T.execute_section) b on b.执行科室=a.执行科室
+order by a.med desc]]></Query>
+</TableData>
+<TableData name="dept" class="com.fr.data.impl.DBTableData">
+<Parameters/>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[JDBC3-宜宾]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select t.depart_name from lis_inspec_departments t where t.depart_name !='全部']]></Query>
+</TableData>
+<TableData name="ward" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="dept"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[JDBC3-宜宾]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select a.ward_name from lis_inspec_wards a
+	inner join lis_inspec_departments b on a.depart_id=b.id 
+	where b.depart_name='${dept}']]></Query>
+</TableData>
+<TableData name="main2" class="com.fr.data.impl.DBTableData">
+<Parameters>
+<Parameter>
+<Attributes name="d1"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="d2"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ward"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="inspecType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="dept"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ptype"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</Parameters>
+<Attributes maxMemRowCount="-1"/>
+<Connection class="com.fr.data.impl.NameDatabaseConnection">
+<DatabaseName>
+<![CDATA[JDBC3-宜宾]]></DatabaseName>
+</Connection>
+<Query>
+<![CDATA[select a.执行科室, a.最短送检时间, a.最长送检时间, a.med, b.零送检标本数, a.total
+from
+(select T.execute_section 执行科室,min(T.cha) 最短送检时间,max(T.cha) 最长送检时间, round(median(T.cha), 0) med,count(t.id) total from (
+select a.execute_section,a.id,a.p_name,round(to_number(a.time_receive-a.time_collect) * 24 * 60) as cha
+from lis_requestion_receive a left join v_inspec_general_info b
+    on a.barcode = b.pid where a.time_receive between to_date('${d1}','yyyy-MM-dd HH24:mi:ss')
+and to_date('${d2}','yyyy-MM-dd HH24:mi:ss') 
+${if(len(dept) == 0,""," and a.sourcefrom_section = '" + dept + "'")}
+${if(len(ward) == 0,""," and a.execute_section = '" +ward+ "'")}
+${if(len(ptype) == 0,"","and a.emergency in (" + ptype + ")")}
+${if(len(inspecType) == 0,"","and b.dev_type in (" + inspecType + ")")}
+order by cha desc) T
+where cha > 0
+group by T.execute_section
+order by med desc) a
+left join
+(select T.execute_section 执行科室,count(t.id) 零送检标本数 from (
+select a.execute_section,a.id,a.p_name,round(to_number(a.time_receive-a.time_collect) * 24 * 60) as cha
+from lis_requestion_receive a left join v_inspec_general_info b
+    on a.barcode = b.pid where a.time_receive between to_date('${d1}','yyyy-MM-dd HH24:mi:ss')
+and to_date('${d2}','yyyy-MM-dd HH24:mi:ss') 
+${if(len(dept) == 0,""," and a.sourcefrom_section = '" + dept + "'")}
+${if(len(ward) == 0,""," and a.execute_section = '" +ward+ "'")}
+${if(len(ptype) == 0,"","and a.emergency in (" + ptype + ")")}
+${if(len(inspecType) == 0,"","and b.dev_type in (" + inspecType + ")")}
+order by cha desc) T
+where cha = 0
+group by T.execute_section) b on b.执行科室=a.执行科室
+order by a.med desc]]></Query>
+</TableData>
+<TableData name="程序1" class="com.fr.data.impl.ClassTableData">
+<ClassTableDataAttr className="com.fr.data.MidTimeChkDataDemo"/>
+</TableData>
+</TableDataMap>
+<Report class="com.fr.report.worksheet.WorkSheet" name="sheet1">
+<ReportPageAttr>
+<HR/>
+<FR/>
+<HC/>
+<FC/>
+</ReportPageAttr>
+<ColumnPrivilegeControl/>
+<RowPrivilegeControl/>
+<RowHeight defaultValue="723900">
+<![CDATA[1295400,876300,952500,723900,1371600,1066800,723900,762000,838200,723900,723900]]></RowHeight>
+<ColumnWidth defaultValue="2743200">
+<![CDATA[3467100,3619500,3810000,3848100,4838700,4381500,2743200,2743200,2743200,2743200,2743200]]></ColumnWidth>
+<CellElementList>
+<C c="0" r="0" cs="6" s="0">
+<O>
+<![CDATA[送检时间中位数]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="0" r="1" s="1">
+<O>
+<![CDATA[执行科室]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="1" r="1" s="1">
+<O>
+<![CDATA[最短送检时间]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="2" r="1" s="1">
+<O>
+<![CDATA[最长送检时间]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="3" r="1" s="1">
+<O>
+<![CDATA[送检中位数]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="4" r="1" s="1">
+<O>
+<![CDATA[0送检时间数]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="5" r="1" s="1">
+<O>
+<![CDATA[总标本数]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="0" r="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="main2" columnName="执行科室"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="1" r="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="main2" columnName="最短送检时间"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="2" r="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="main2" columnName="最长送检时间"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="3" r="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="main2" columnName="MED"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="4" r="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="main2" columnName="零送检标本数"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<HighlightList>
+<Highlight class="com.fr.report.cell.cellattr.highlight.DefaultHighlight">
+<Name>
+<![CDATA[条件属性1]]></Name>
+<Condition class="com.fr.data.condition.ListCondition">
+<JoinCondition join="0">
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="0">
+<O>
+<![CDATA[null]]></O>
+</Compare>
+</Condition>
+</JoinCondition>
+<JoinCondition join="1">
+<Condition class="com.fr.data.condition.ObjectCondition">
+<Compare op="0">
+<O>
+<![CDATA[]]></O>
+</Compare>
+</Condition>
+</JoinCondition>
+</Condition>
+<HighlightAction class="com.fr.report.cell.cellattr.highlight.ValueHighlightAction">
+<O>
+<![CDATA[0]]></O>
+</HighlightAction>
+</Highlight>
+</HighlightList>
+<Expand dir="0"/>
+</C>
+<C c="5" r="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="main2" columnName="TOTAL"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="0" r="4" cs="6" s="0">
+<O>
+<![CDATA[标本送检时间90百分位数]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="0" r="5" cs="6" s="3">
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[="统计时间：" + $d1 + " 到 " + $d2]]></Attributes>
+</O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="2" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="3" r="6">
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="4" r="6" cs="2" s="4">
+<O>
+<![CDATA[单位：分钟]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="0" r="7" cs="2" s="5">
+<O>
+<![CDATA[执行科室]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="2" r="7" s="5">
+<O>
+<![CDATA[病人号]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="3" r="7" s="5">
+<O>
+<![CDATA[姓名]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="4" r="7" s="5">
+<O>
+<![CDATA[送检科室]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="5" r="7" s="5">
+<O>
+<![CDATA[采集-接收时间差]]></O>
+<PrivilegeControl/>
+<Expand/>
+</C>
+<C c="0" r="8" cs="2" s="2">
+<O t="DSColumn">
+<Attributes dsName="程序1" columnName="column#执行科室"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="2" r="8" s="2">
+<O t="DSColumn">
+<Attributes dsName="程序1" columnName="column#病人号"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="3" r="8" s="2">
+<O t="DSColumn">
+<Attributes dsName="程序1" columnName="column#病人姓名"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="4" r="8" s="2">
+<O t="DSColumn">
+<Attributes dsName="程序1" columnName="column#送检科室"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+<C c="5" r="8" s="6">
+<O t="DSColumn">
+<Attributes dsName="程序1" columnName="column#采集-接收时间差"/>
+<Complex/>
+<RG class="com.fr.report.cell.cellattr.core.group.FunctionGrouper"/>
+<Parameters/>
+</O>
+<PrivilegeControl/>
+<Expand dir="0"/>
+</C>
+</CellElementList>
+<ReportAttrSet>
+<ReportSettings headerHeight="0" footerHeight="0">
+<PaperSetting/>
+</ReportSettings>
+<Header reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Header>
+<Footer reportPageType="0">
+<Background name="NullBackground"/>
+<LeftList/>
+<CenterList/>
+<RightList/>
+</Footer>
+</ReportAttrSet>
+<PrivilegeControl/>
+</Report>
+<ReportParameterAttr>
+<Attributes showWindow="true" delayPlaying="true" windowPosition="1" align="0"/>
+<PWTitle>
+<![CDATA[参数]]></PWTitle>
+<ParameterUI class="com.fr.form.main.parameter.FormParameterUI">
+<Layout class="com.fr.form.ui.container.WParameterLayout">
+<WidgetName name="para"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<Margin top="0" left="0" bottom="0" right="0"/>
+<Border>
+<border style="0" color="-723724" type="0" borderStyle="0"/>
+<WidgetTitle>
+<O>
+<![CDATA[新建标题]]></O>
+<FRFont name="SimSun" style="0" size="72"/>
+<Position pos="0"/>
+</WidgetTitle>
+<Alpha alpha="1.0"/>
+</Border>
+<Background name="ColorBackground" color="-1118482"/>
+<LCAttr vgap="0" hgap="0" compInterval="0"/>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.Label">
+<WidgetName name="Labeld1"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<widgetValue>
+<O>
+<![CDATA[开始日期:]]></O>
+</widgetValue>
+<LabelAttr verticalcenter="true" textalign="0" autoline="true"/>
+<FRFont name="SimSun" style="0" size="72"/>
+<border style="0" color="-723724"/>
+</InnerWidget>
+<BoundsAttr x="50" y="25" width="80" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.DateEditor">
+<WidgetName name="d1"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<DateAttr format="yyyy-MM-dd HH:mm:ss"/>
+<widgetValue>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=MONTHDELTA(now(), -1)]]></Attributes>
+</O>
+</widgetValue>
+</InnerWidget>
+<BoundsAttr x="130" y="25" width="169" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.parameter.FormSubmitButton">
+<WidgetName name="Search"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<Text>
+<![CDATA[查询]]></Text>
+<Hotkeys>
+<![CDATA[enter]]></Hotkeys>
+</InnerWidget>
+<BoundsAttr x="862" y="59" width="80" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.Label">
+<WidgetName name="Labeld2"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<widgetValue>
+<O>
+<![CDATA[结束日期:]]></O>
+</widgetValue>
+<LabelAttr verticalcenter="true" textalign="0" autoline="true"/>
+<FRFont name="SimSun" style="0" size="72"/>
+<border style="0" color="-723724"/>
+</InnerWidget>
+<BoundsAttr x="299" y="25" width="80" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.DateEditor">
+<WidgetName name="d2"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<DateAttr format="yyyy-MM-dd HH:mm:ss"/>
+<widgetValue>
+<O t="Formula" class="Formula">
+<Attributes>
+<![CDATA[=now()]]></Attributes>
+</O>
+</widgetValue>
+</InnerWidget>
+<BoundsAttr x="379" y="25" width="169" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.Label">
+<WidgetName name="Labeldept"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<widgetValue>
+<O>
+<![CDATA[院区:]]></O>
+</widgetValue>
+<LabelAttr verticalcenter="true" textalign="0" autoline="true"/>
+<FRFont name="SimSun" style="0" size="72"/>
+<border style="0" color="-723724"/>
+</InnerWidget>
+<BoundsAttr x="50" y="59" width="80" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.ComboBox">
+<WidgetName name="dept"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<Dictionary class="com.fr.data.impl.TableDataDictionary">
+<FormulaDictAttr ki="0" vi="0"/>
+<TableDataDictAttr>
+<TableData class="com.fr.data.impl.NameTableData">
+<Name>
+<![CDATA[dept]]></Name>
+</TableData>
+</TableDataDictAttr>
+</Dictionary>
+<widgetValue>
+<O>
+<![CDATA[]]></O>
+</widgetValue>
+</InnerWidget>
+<BoundsAttr x="130" y="59" width="141" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.Label">
+<WidgetName name="Labelward"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<widgetValue>
+<O>
+<![CDATA[科室:]]></O>
+</widgetValue>
+<LabelAttr verticalcenter="true" textalign="0" autoline="true"/>
+<FRFont name="SimSun" style="0" size="72"/>
+<border style="0" color="-723724"/>
+</InnerWidget>
+<BoundsAttr x="271" y="59" width="80" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.ComboBox">
+<WidgetName name="ward"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<Dictionary class="com.fr.data.impl.TableDataDictionary">
+<FormulaDictAttr ki="0" vi="0"/>
+<TableDataDictAttr>
+<TableData class="com.fr.data.impl.NameTableData">
+<Name>
+<![CDATA[ward]]></Name>
+</TableData>
+</TableDataDictAttr>
+</Dictionary>
+<widgetValue>
+<O>
+<![CDATA[]]></O>
+</widgetValue>
+</InnerWidget>
+<BoundsAttr x="351" y="59" width="141" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.ComboBox">
+<WidgetName name="ptype"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<Dictionary class="com.fr.data.impl.CustomDictionary">
+<CustomDictAttr>
+<Dict key="&apos;&apos;,&apos;1&apos;,&apos;0&apos;" value="常规"/>
+<Dict key="&apos;2&apos;" value="急诊"/>
+</CustomDictAttr>
+</Dictionary>
+<widgetValue>
+<O>
+<![CDATA[]]></O>
+</widgetValue>
+</InnerWidget>
+<BoundsAttr x="733" y="59" width="121" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.Label">
+<WidgetName name="label0"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<widgetValue>
+<O>
+<![CDATA[常规/急诊]]></O>
+</widgetValue>
+<LabelAttr verticalcenter="true" textalign="0" autoline="true"/>
+<FRFont name="SimSun" style="0" size="72"/>
+<border style="0" color="-723724"/>
+</InnerWidget>
+<BoundsAttr x="653" y="59" width="80" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.Label">
+<WidgetName name="LabelinspecType"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<widgetValue>
+<O>
+<![CDATA[三大常规/凝血]]></O>
+</widgetValue>
+<LabelAttr verticalcenter="true" textalign="0" autoline="true"/>
+<FRFont name="SimSun" style="0" size="72"/>
+<border style="0" color="-723724"/>
+</InnerWidget>
+<BoundsAttr x="492" y="59" width="80" height="21"/>
+</Widget>
+<Widget class="com.fr.form.ui.container.WAbsoluteLayout$BoundsWidget">
+<InnerWidget class="com.fr.form.ui.ComboBox">
+<WidgetName name="inspecType"/>
+<WidgetAttr>
+<PrivilegeControl/>
+</WidgetAttr>
+<Dictionary class="com.fr.data.impl.CustomDictionary">
+<CustomDictAttr>
+<Dict key="&apos;3&apos;,&apos;4&apos;,&apos;5&apos;" value="三大常规"/>
+<Dict key="&apos;7&apos;" value="凝血"/>
+</CustomDictAttr>
+</Dictionary>
+<widgetValue>
+<O>
+<![CDATA[]]></O>
+</widgetValue>
+</InnerWidget>
+<BoundsAttr x="573" y="59" width="80" height="21"/>
+</Widget>
+<Sorted sorted="false"/>
+<Display display="true"/>
+<DelayDisplayContent delay="true"/>
+<Position position="0"/>
+<Design_Width design_width="960"/>
+<MobileWidgetList>
+<Widget widgetName="d1"/>
+<Widget widgetName="d2"/>
+<Widget widgetName="dept"/>
+<Widget widgetName="ward"/>
+<Widget widgetName="inspecType"/>
+<Widget widgetName="ptype"/>
+</MobileWidgetList>
+<WidgetNameTagMap>
+<NameTag name="inspecType" tag="三大常规/凝血"/>
+<NameTag name="ptype" tag="常规/急诊"/>
+<NameTag name="dept" tag="院区:"/>
+<NameTag name="ward" tag="科室:"/>
+<NameTag name="d1" tag="开始日期:"/>
+<NameTag name="d2" tag="结束日期:"/>
+</WidgetNameTagMap>
+</Layout>
+<DesignAttr width="960" height="101"/>
+</ParameterUI>
+<Parameter>
+<Attributes name="d1"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="d2"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="dept"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ward"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="ptype"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+<Parameter>
+<Attributes name="inspecType"/>
+<O>
+<![CDATA[]]></O>
+</Parameter>
+</ReportParameterAttr>
+<StyleList>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="微软雅黑" style="1" size="144" foreground="-1"/>
+<Background name="ColorBackground" color="-10572061"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-10572061"/>
+<Background name="ColorBackground" color="-1"/>
+<Border>
+<Bottom style="1" color="-2171170"/>
+<Left style="1" color="-2171170"/>
+<Right style="1" color="-2171170"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border>
+<Top style="1" color="-2171170"/>
+<Bottom style="1" color="-2171170"/>
+<Left style="1" color="-2171170"/>
+<Right style="1" color="-2171170"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="4" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="NullBackground"/>
+<Border/>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="1" size="72" foreground="-10572061"/>
+<Background name="ColorBackground" color="-1"/>
+<Border>
+<Top style="1" color="-2171170"/>
+<Bottom style="1" color="-2171170"/>
+<Left style="1" color="-2171170"/>
+<Right style="1" color="-2171170"/>
+</Border>
+</Style>
+<Style horizontal_alignment="0" imageLayout="1">
+<FRFont name="SimSun" style="0" size="72"/>
+<Background name="ColorBackground" color="-3342388"/>
+<Border>
+<Top style="1" color="-2171170"/>
+<Bottom style="1" color="-2171170"/>
+<Left style="1" color="-2171170"/>
+<Right style="1" color="-2171170"/>
+</Border>
+</Style>
+</StyleList>
+<DesignerVersion DesignerVersion="IAA"/>
+<PreviewType PreviewType="0"/>
+</WorkBook>

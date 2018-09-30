@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>历史判断规则</title>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="../statics/css/type.css" />
+</head>
+
+<body>
+	<div class="container-fluid" style="padding-bottom: 0px;">
+		<div class="row">
+			<div class="panel panel-primary leftTypePanel">
+				<div class="panel-heading">类型列表</div>
+				<div class="toolbar_type">
+					<div class="btn-group btn-group-sm  pull-left">
+						<button type="button" class="btn btn-default btn-noborder"
+							onClick="openHistAddType()">
+							新增 <span class="glyphicon glyphicon-plus"></span>
+						</button>
+						<button type="button" class="btn btn-default btn-noborder"
+							onClick="openHistEditType()">
+							修改 <span class="glyphicon glyphicon-plus"></span>
+						</button>
+						<button type="button" class="btn btn-default btn-noborder"
+							onClick="deleteHistType()">
+							删除 <span class="glyphicon glyphicon-plus"></span>
+						</button>
+						<button type="button" class="btn btn-default btn-noborder"
+							onClick="isOpenHistType()">
+							是否启用 <span class="glyphicon glyphicon-plus"></span>
+						</button>
+						<select id="histGroupForType" class="selectpicker"
+							data-live-search="true">
+						</select>
+					</div>
+					<div class="btn-group btn-group-sm  pull-right">
+						<button type="button" class="btn btn-default btn-noborder"
+							onClick="refreshHistTypeTable()">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</div>
+					<table id="tb_histTypeInfo"></table>
+				</div>
+			</div>
+			<div class="panel panel-primary rightTypePanel">
+				<div id="addedTableName" class="panel-heading">已添加项目</div>
+				<div class="toolbar_item">
+					<div class="btn-group btn-group-sm  pull-left">
+						<button id="histJudgeButton" type="button" class="btn btn-default btn-noborder"
+							onClick="AddHistJudgeForItem()">
+							规则维护<span class="glyphicon glyphicon-plus"></span>
+						</button>
+						<button id="histDeleteButton" type="button" class="btn btn-default btn-noborder" >
+							删除<span class="glyphicon glyphicon-plus"></span>
+						</button>
+					</div>
+					<div class="btn-group btn-group-sm  pull-right">
+						<button type="button" class="btn btn-default btn-noborder"
+							onClick="refreshHistAddedTable()">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</div>
+
+					<table id="tb_addedHistItemInfo"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid" style="padding-bottom: 0px;">
+		<div class="row">
+			<div class="panel panel-primary leftTypePanel">
+				<div id=histBeforeAddTableName class="panel-heading">待选择项目</div>
+				<div class="toolbar_type">
+					<div class="btn-group btn-group-sm  pull-left">
+						<button id="histAddTypeButton" type="button" class="btn btn-default btn-noborder"
+							onClick="addHistTypeForItem()">
+							添加项目到类型 <span class="glyphicon glyphicon-plus"></span>
+						</button>
+					</div>
+					<div class="btn-group btn-group-sm  pull-right">
+						<button type="button" class="btn btn-default btn-noborder"
+							onClick="refreshHistBeforeAddTable()">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</div>
+					<table id="tb_beforeAddHistInfo"></table>
+				</div>
+			</div>
+			<div class="panel panel-primary rightTypePanel">
+				<div class="panel-heading">审核数据</div>
+				<div class="toolbar_type">
+					<div class="btn-group btn-group-sm  pull-left">
+						<button id="histIsOpenButton"  type="button" class="btn btn-default btn-noborder"
+							onClick="isOpenHistJudge()">
+							是否启用 <span class="glyphicon glyphicon-plus"></span>
+						</button>
+						<button id="histEditButton"  type="button" class="btn btn-default btn-noborder">
+							修改 <span class="glyphicon glyphicon-plus" ></span>
+						</button>
+						<button id="histDeleteJudgeButton"  type="button" class="btn btn-default btn-noborder">
+							删除 <span class="glyphicon glyphicon-plus" ></span>
+						</button>
+					</div>
+					<table id="tb_judgeHistInfo"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 添加审核范围类型窗口 -->
+	<div class="modal fade" id="addHistTypeWin" role="dialog" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">编辑类型</h4>
+				</div>
+				<div class="modal-body">
+					<form id="addHistTypeForm" role="form" class="form-horizontal">
+						<div class="form-group">
+							<label for="roleName" class="col-sm-4 control-label">类型名称:</label>
+							<div class="col-sm-8">
+								<select id="histTypeTextSelect" name="typeName">
+  									  <option value ="">--请选择--</option>
+									  <option value ="绝对值">绝对值</option>
+									  <option value ="百分比">百分比</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label">组名:</label>
+							<div class="col-sm-8">
+								<select id="histGroupAddSelect" name="groupId" class="selectpicker"
+									data-live-search="true">
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label">是否开启:</label>
+							<div class="col-lg-5 form-inline">
+								<div class="radio">
+									<label> <input type="radio" name="isOpen" id="isOpenTypeHist1"
+										value="1" /> 是
+									</label>
+								</div>
+								<div class="radio">
+									<label> <input type="radio" name="isOpen" id="isOpenTypeHist0"
+										value="0" /> 否
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="roleDescription" class="col-sm-4 control-label">类型说明:</label>
+							<div class="col-sm-8">
+								<textarea style="width: 220px; height: 100px" class="form-control" name="remark"
+									id="remarkTypeHist" placeholder="请输入类型描述"></textarea>
+							</div>
+						</div>
+						<input type="text" id="typeHistId" name="id" hidden="true" readonly="true">
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"  onClick="closeHistTypeForm()"
+								data-dismiss="modal">关闭</button>
+							<button type="button" class="btn btn-primary" 
+								onClick="submitHistTypeForm()">提交更改</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	
+	<!-- 添加绝对值判断 -->
+	<div class="modal fade" id="addAbsWin" role="dialog" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myAbsModalLabel">规则维护</h4>
+				</div>
+				<div class="modal-body">
+					<form id="addAbsForm" role="form" class="form-horizontal">
+						<div class="form-group">
+							<label for="roleName" class="col-sm-4 control-label">绝对值:</label>
+							<div class="col-lg-5 form-inline">
+								<input type="number" required="required"  class="form-control" name="abs"
+									id="abs"  required="required"  placeholder="请输入绝对值" style="width: 300px">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="roleName" class="col-sm-4 control-label">历史天数:</label>
+							<div class="col-lg-5 form-inline">
+								<input type="datetime" class="form-control" name="historyDay"
+									id="absHistoryDay"  required="required"  placeholder="请输入历史天数" style="width: 300px">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label">是否开启:</label>
+							<div class="col-lg-5 form-inline">
+								<div class="radio">
+									<label> <input type="radio" name="absoluteIsOpen" id="absoluteIsOpen1"
+										value="1" /> 是
+									</label>
+								</div>
+								<div class="radio">
+									<label> <input type="radio" name="absoluteIsOpen" id="absoluteIsOpen0"
+										value="0" /> 否
+									</label>
+								</div>
+							</div>
+						</div>
+						<input type="text" id="absId" name="itemDevId" hidden="true" readonly="true">
+						<input type="text" id="absTypeMark" name="typeMark" hidden="true" readonly="true">
+						<input type="text" id="absTypeId" name="typeId" hidden="true" readonly="true">
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"  onClick="closeAbsForm()"
+								data-dismiss="modal">关闭</button>
+							<button type="button" class="btn btn-primary" 
+								onClick="submitAbsForm()">提交更改</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加百分比判断 -->
+	<div class="modal fade" id="addPerWin" role="dialog" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myPerModalLabel">规则维护</h4>
+				</div>
+				<div class="modal-body">
+					<form id="addPerForm" role="form" class="form-horizontal">
+						<div class="form-group">
+							<label for="roleName" class="col-sm-4 control-label">百分比:</label>
+							<div class="col-lg-5 form-inline">
+								<input type="number" class="form-control" name="percentage"
+									id="per"  required="required"  placeholder="请输入百分比" style="width: 300px">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="roleName" class="col-sm-4 control-label">历史天数:</label>
+							<div class="col-lg-5 form-inline">
+								<input type="datetime" class="form-control" name="historyDay"
+									id="perHistoryDay"  required="required"  placeholder="请输入历史天数" style="width: 300px">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label">是否开启:</label>
+							<div class="col-lg-5 form-inline">
+								<div class="radio">
+									<label> <input type="radio" name="percentIsOpen" id="percentIsOpen1"
+										value="1" /> 是
+									</label>
+								</div>
+								<div class="radio">
+									<label> <input type="radio" name="percentIsOpen" id="percentIsOpen0"
+										value="0" /> 否
+									</label>
+								</div>
+							</div>
+						</div>
+						<input type="text" id="perId" name="itemDevId" hidden="true" readonly="true">
+						<input type="text" id="perTypeMark" name="typeMark" hidden="true" readonly="true">
+						<input type="text" id="perTypeId" name="typeId" hidden="true" readonly="true">
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"  onClick="closePerForm()"
+								data-dismiss="modal">关闭</button>
+							<button type="button" class="btn btn-primary" 
+								onClick="submitPerForm()">提交更改</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+<!-- 	用于修改的模态框   由于需要  添加规则和修改规则不能使用同一个模态框-->
+<!-- 添加绝对值判断 -->
+	<div class="modal fade" id="editAbsWin" role="dialog" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title" >规则修改</h4>
+				</div>
+				<div class="modal-body">
+					<form id="editAbsForm" role="form" class="form-horizontal">
+						<div class="form-group">
+							<label for="roleName" class="col-sm-4 control-label">绝对值:</label>
+							<div class="col-lg-5 form-inline">
+								<input type="number" required="required"  class="form-control" name="abs"
+									id="editAbs"  required="required"  placeholder="请输入绝对值" style="width: 300px">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="roleName" class="col-sm-4 control-label">历史天数:</label>
+							<div class="col-lg-5 form-inline">
+								<input type="datetime" class="form-control" name="historyDay"
+									id="editAbsHistoryDay"  required="required"  placeholder="请输入历史天数" style="width: 300px">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label">是否开启:</label>
+							<div class="col-lg-5 form-inline">
+								<div class="radio">
+									<label> <input type="radio" name="absoluteIsOpen" id="editAbsoluteIsOpen1"
+										value="1" /> 是
+									</label>
+								</div>
+								<div class="radio">
+									<label> <input type="radio" name="absoluteIsOpen" id="editAbsoluteIsOpen0"
+										value="0" /> 否
+									</label>
+								</div>
+							</div>
+						</div>
+						<input type="text" id="onlyAbsId" name="id" hidden="true" readonly="true">
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"  onClick="closeEditAbsForm()"
+								data-dismiss="modal">关闭</button>
+							<button type="button" class="btn btn-primary" 
+								onClick="submitEditAbsForm()">提交更改</button>
+						</div>
+						
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加百分比判断 -->
+	<div class="modal fade" id="editPerWin" role="dialog" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title" >规则修改</h4>
+				</div>
+				<div class="modal-body">
+					<form id="editPerForm" role="form" class="form-horizontal">
+						<div class="form-group">
+							<label for="roleName" class="col-sm-4 control-label">百分比:</label>
+							<div class="col-lg-5 form-inline">
+								<input type="number" class="form-control" name="percentage"
+									id="editPer"  required="required"  placeholder="请输入百分比" style="width: 300px">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="roleName" class="col-sm-4 control-label">历史天数:</label>
+							<div class="col-lg-5 form-inline">
+								<input type="datetime" class="form-control" name="historyDay"
+									id="editPerHistoryDay"  required="required"  placeholder="请输入历史天数" style="width: 300px">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label">是否开启:</label>
+							<div class="col-lg-5 form-inline">
+								<div class="radio">
+									<label> <input type="radio" name="percentIsOpen" id="editPercentIsOpen1"
+										value="1" /> 是
+									</label>
+								</div>
+								<div class="radio">
+									<label> <input type="radio" name="percentIsOpen" id="editPercentIsOpen0"
+										value="0" /> 否
+									</label>
+								</div>
+							</div>
+						</div>
+						<input type="text" id="onlyPerId" name="id" hidden="true" readonly="true">
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"  onClick="closeEditPerForm()"
+								data-dismiss="modal">关闭</button>
+							<button type="button" class="btn btn-primary" 
+								onClick="submitEditPerForm()">提交更改</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+</body>
+<script type="text/javascript"
+	src="../statics/js/modules/HistoryDataJudgment.js"></script>
+</html>

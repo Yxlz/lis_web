@@ -1,0 +1,10 @@
+@CHARSET "UTF-8";
+.leftTypePanel {
+	width: 20%;
+	float: left;
+}
+
+.rightItemPanel {
+	width: 80%;
+	float: right;
+}

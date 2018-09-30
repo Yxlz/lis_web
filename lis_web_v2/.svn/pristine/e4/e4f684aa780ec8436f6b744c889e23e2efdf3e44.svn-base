@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>全院多重耐药菌株出现情况统计</title>
+</head>
+<script type="text/javascript">
+	$(document).ready(function() {
+		loadIframeContent('hospitalMultResistanceStat');
+	});
+</script>
+<body>
+	<div id="hospitalMultResistanceStat">
+		<iframe name="target" frameborder="0" scrolling="no" width="100%"
+			height="100%" src=""></iframe>
+	</div>
+</body>
+</html>

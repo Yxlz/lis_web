@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>成都信通检验医学实验室管理系统</title>
+<script type="text/javascript">
+	var scriptNode = document.createElement("script");
+	var linkNode = document.createElement("link");
+	linkNode.setAttribute("rel", "import");
+	linkNode.setAttribute("href", "app.html");
+	scriptNode.setAttribute("type", "text/javascript");
+	if (!!window.ActiveXObject || "ActiveXObject" in window) {
+		scriptNode.setAttribute("src", "../statics/jQuery/jquery-1.11.3.min.js");
+	} else {
+		scriptNode.setAttribute("src", "../statics/jQuery/jquery-3.2.1.min.js");
+	}
+	document.head.appendChild(scriptNode);
+	document.head.appendChild(linkNode);
+</script>
+<link rel="icon" href="../statics/img/tray.gif" type="image/x-icon"/>
+</head>
+<body>
+	<div class="topbar">
+		<nav  role="navigation">
+			<ul class="nav navbar-nav navbar-right">
+					<li><a id="currUser" href="#" style="color: black"><span
+							class="glyphicon glyphicon-user"></span> </a></li>
+					<li><a id="logout" href="#" onclick="logout()" style="color: black"><span
+							class="glyphicon glyphicon-log-out"></span> 切换用户</a></li>
+			</ul>
+		</nav>
+	</div>
+	<div class="left-fixed_right-auto">
+		<div class="left">
+			<div class="leftMainMenu" id="leftMainMenu"></div>
+		</div>
+		<div class="nth-tabs" id="tabContainer"></div>
+	</div>
+	<!-- <div class="footer">
+		<p id="copyright">Copyright &copy; 2018 成都信通网易医疗科技发展有限公司 版权所有</p>
+	</div> -->
+</body>
+
+<script type="text/javascript" src="../statics/js/main/main.js"></script>
+<!-- <script type="text/javascript" src="../statics/bootstrap-menu/menu.js"></script> -->
+</html>

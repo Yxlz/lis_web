@@ -1,0 +1,7 @@
+@CHARSET "UTF-8";
+.indexPanelBody {
+	height: 200px;
+}
+.indexContainer{
+
+}

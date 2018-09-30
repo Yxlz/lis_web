@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>质控项目变异系数不合格率</title>
+</head>
+<script type="text/javascript">
+	$(document).ready(function() {
+		loadIframeContent("Unqualified_rate_of_variation_coefficient_of_quality_control_project");//调用main.js里的方法加载报表页面
+	});
+</script>
+<body>
+	<div id="Unqualified_rate_of_variation_coefficient_of_quality_control_project">
+		<iframe name="target" frameborder="0" scrolling="no" width="100%"
+			height="100%" src=""></iframe>
+	</div>
+</body>
+</html>

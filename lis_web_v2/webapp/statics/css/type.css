@@ -1,0 +1,8 @@
+.leftTypePanel {
+	width:45%;
+	float: left;
+}
+.rightTypePanel {
+	width:54%;
+	float: right;
+}
